@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  microservice-b:
+    image: prash609/microservice-b:latest
+    container_name: microservice-b
+    ports:
+      - "8083:8082"
+    networks:
+      - app-net
+
+  microservice-a:
+    image: prash609/microservice-a:latest
+    container_name: microservice-a
+    ports:
+      - "8080:8081"
+    networks:
+      - app-net
+    depends_on:
+      - microservice-b
+
+networks:
+  app-net:
+    driver: bridge
+

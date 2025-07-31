@@ -1,0 +1,23 @@
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: microservice-b
+spec:
+  selector:
+    matchLabels:
+      app: microservice-b
+  serviceName: "microservice-b"
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: microservice-b
+    spec:
+      containers:
+      - name: ms-b
+        image: prash609/microservice-b:latest
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: regcred

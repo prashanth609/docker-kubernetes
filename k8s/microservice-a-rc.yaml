@@ -1,0 +1,21 @@
+
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: microservice-a
+spec:
+  replicas: 2
+  selector:
+    app: microservice-a
+  template:
+    metadata:
+      labels:
+        app: microservice-a
+    spec:
+      containers:
+      - name: ms-a
+        image: prash609/microservice-a:latest
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: regcred
