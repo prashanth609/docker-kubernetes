@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: svc-a
+  namespace: demo
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: svc-a
+  template:
+    metadata:
+      labels:
+        app: svc-a
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: svc-a
+          image: prash609/microservice-a:1.0.0
+          ports:
+            - containerPort: 8080
+          env:
+            # Let A find B via K8s DNS (headless service name "svc-b")
+            - name: SVC_B_HOST
+              value: "svc-b"          # resolves to sts pods via headless service
+            - name: SVC_B_PORT
+              value: "8082"
+          # If Spring Boot Actuator is available, keep these probes; otherwise switch to tcpSocket or remove.
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
